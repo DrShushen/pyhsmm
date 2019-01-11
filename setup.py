@@ -23,12 +23,19 @@ except ImportError:
 else:
     use_cython = True
 
+def set_builtin(name, value):
+    if isinstance(__builtins__, dict):
+        __builtins__[name] = value
+    else:
+        setattr(__builtins__, name, value)
+
 # wrap the build_ext command to handle numpy bootstrap and compilation errors
 class build_ext(_build_ext):
     # see http://stackoverflow.com/q/19919905 for explanation
     def finalize_options(self):
         _build_ext.finalize_options(self)
-        __builtins__.__NUMPY_SETUP__ = False
+        #__builtins__.__NUMPY_SETUP__ = False
+        set_builtin(__NUMPY_SETUP__, False)
         import numpy as np
         self.include_dirs.append(np.get_include())
 
